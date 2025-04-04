@@ -1,0 +1,17 @@
+{
+  "scriptId": "1Ng12H7lbUqom5UtcTzhSBJ72AFdaN5qyG5ONLKa-8zP8VeihJxfJmJXx",
+  "rootDir": "tgbot_wallet_gapps",
+  "parentId": "1GxF_Jw2UqF4iHNR46vgVogWLmQhPfrUlDzRyGvdt3WI",
+  "scriptExtensions": [
+    ".js",
+    ".gs"
+  ],
+  "htmlExtensions": [
+    ".html"
+  ],
+  "jsonExtensions": [
+    ".json"
+  ],
+  "filePushOrder": [],
+  "skipSubdirectories": false
+}
