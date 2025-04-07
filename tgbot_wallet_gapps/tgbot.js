@@ -14,15 +14,16 @@
 // clasp list-deployments
 // clasp create-deployment -i "AKfycbz2rPEcu6yLwQrV5k6A90nzip_2oeEelqenikS-2VDfmIya7kO1P5Q2Fk9Bu70mDJqh6A"
 
+
 function setWebhook() {
   var scriptUrl = ScriptApp.getService().getUrl();
   var response = UrlFetchApp.fetch("https://api.telegram.org/bot" + TOKEN  + "/setWebhook?url=" + encodeURIComponent("https://script.google.com/macros/s/AKfycbz2rPEcu6yLwQrV5k6A90nzip_2oeEelqenikS-2VDfmIya7kO1P5Q2Fk9Bu70mDJqh6A/exec"));
   Logger.log(response.getContentText());
 
-  ScriptApp.newTrigger("triggerEveryHours1")
-  .timeBased()
-  .everyHours(1)
-  .create();
+  // ScriptApp.newTrigger("triggerEveryHours1")
+  // .timeBased()
+  // .everyHours(1)
+  // .create();
 }
 
 // function doTimeout1(row, timeout) {
@@ -100,6 +101,11 @@ function getCellByUserId(userid, header) {
   column = s.getRange("1:1").createTextFinder(header).useRegularExpression(false).findAll()[0].getColumn()
   row = getRowByUserId(userid)
   return s.getRange(row,column)
+}
+
+function writeAnswerTo(webhook, colHeader)  {
+    getCellByUserId(webhook.message.from.id, colHeader).setValue(webhook.message.text)
+
 }
 
 function changeStateToWaitReady_1(webhook) {
@@ -189,7 +195,7 @@ function doActions(webhook, actions) {
     chat_id = webhook.callback_query.message.chat.id.toString()
   }
 
-    for (let action of actions) {
+  for (let action of actions) {
     if (action.callFunc) {
       action.callFunc(webhook);
     } else if (action.tgMethod) {
@@ -198,14 +204,68 @@ function doActions(webhook, actions) {
     }
   }
 }
+function myFunction() {
+  try {
+    // Add one line to use BetterLog and log to a spreadsheet
+    Logger = BetterLog.useSpreadsheet('1GxF_Jw2UqF4iHNR46vgVogWLmQhPfrUlDzRyGvdt3WI', "Log"); 
+    
+    //Now you can log and it will also log to the spreadsheet
+    Logger.log("That's all you need to do");  
+    
+    //Do more logging
+    for (var i = 0; i < 5; i++) {
+      var processingMessage = 'Processing ' + i;
+      Logger.finest('This is inside my loop. i is %s', i );
+    }
+    //We're done
+    Logger.log('The loop is done and i is now %s', i );
+    
+  } catch (e) { //with stack tracing if your exceptions bubble up to here
+    e = (typeof e === 'string') ? new Error(e) : e;
+    Logger.severe('%s: %s (line %s, file "%s"). Stack: "%s" . While processing %s.',e.name||'', 
+               e.message||'', e.lineNumber||'', e.fileName||'', e.stack||'', processingMessage||'');
+    throw e;
+  }
+}
 
 function doPost(e) {
+
+  // Logger = useSpreadsheet('1GxF_Jw2UqF4iHNR46vgVogWLmQhPfrUlDzRyGvdt3WI'); 
+  try {
+    
+    Logger = BetterLog.useSpreadsheet('1GxF_Jw2UqF4iHNR46vgVogWLmQhPfrUlDzRyGvdt3WI'); 
+    // Add one line to use BetterLog and log to a spreadsheet
+    // Logger = BetterLog.useSpreadsheet('your-spreadsheet-key-goes-here'); 
+    
+  //   //Now you can log and it will also log to the spreadsheet
+    Logger.log("That's all you need to do");  
+    
+    //Do more logging
+    for (var i = 0; i < 5; i++) {
+      var processingMessage = 'Processing ' + i;
+      Logger.finest('This is inside my loop. i is %s', i );
+    }
+    //We're done
+    Logger.log('The loop is done and i is now %s', i );
+    
+  } catch (e) { //with stack tracing if your exceptions bubble up to here
+    e = (typeof e === 'string') ? new Error(e) : e;
+    Logger.severe('%s: %s (line %s, file "%s"). Stack: "%s" . While processing %s.',e.name||'', 
+               e.message||'', e.lineNumber||'', e.fileName||'', e.stack||'', processingMessage||'');
+    throw e;
+  }
+}
+
+function doPost2(e) {
   var webhook = JSON.parse(e.postData.contents);
   let chat_id = '0';
-  if (webhook.message) {
-    chat_id = webhook.message.chat.id.toString()
-  } else if (webhook.callback_query) {
+  if (webhook.callback_query) {
     chat_id = webhook.callback_query.message.chat.id.toString()
+  } else if (webhook.message) {
+    chat_id = webhook.message.chat.id.toString()
+    if (webhook.message.text === "/start") {
+      getCellByUserId(chat_id, "stateFSM").setValue("START_0")
+    }
   }
 
   if (getRowByUserId(chat_id) === -1) {
