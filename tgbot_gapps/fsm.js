@@ -1,7 +1,7 @@
-var TOKEN = "";
 
 const UserStates = Object.freeze({
   "START_0": [
+    { callFunc: (webhook) => {getCellByUserId(webhook.message.chat.id, "timeout").setValue(new Date().getTime() + (60 * 60 * 0.25))} },
     { tgMethod: "/sendPhoto", 
       payload: {
         'photo': DriveApp.getFileById("https://drive.google.com/file/d/17le16BiyXrOP9efWW0l7OW6Dy19CcN4u/view?usp=drive_link".match(/[-\w]{25,}/)[0]).getBlob()
@@ -92,7 +92,7 @@ const UserStates = Object.freeze({
     { callFunc: webhook => changeStateTo("VODITEL_EST_LI_OPYT", ["VODITEL_5"], webhook.message.chat.id, false, webhook, undefined )},
   ],
   "VODITEL_EST_LI_OPYT": [
-    { callFunc: (webhook) => writeAnswerTo(Object.assign(webhook, {message: {text: webhook.callback_query.data, from: webhook.callback_query.from}}), "VODITEL_EST_LI_OPYT")  },
+    { callFunc: (webhook) => writeAnswerTo(({...webhook, ...{message: {text: webhook.callback_query.data, from: webhook.callback_query.from}}}), "VODITEL_EST_LI_OPYT")  },
     { callFunc: webhook => changeStateTo("VODITEL_6", ["VODITEL_EST_LI_OPYT"], webhook.callback_query.message.chat.id, true, webhook, "imeet_opyt" )},
     { callFunc: webhook => changeStateTo("VODITEL_10", ["VODITEL_EST_LI_OPYT"], webhook.callback_query.message.chat.id, true, webhook, "bez_opyta" )},
   ],
@@ -244,7 +244,7 @@ const UserStates = Object.freeze({
     { callFunc: webhook => changeStateTo("SUDIM_NESUDIM", ["VODITEL_19"], webhook.callback_query.message.chat.id, false, webhook, undefined )},
   ],
   "SUDIM_NESUDIM": [
-    { callFunc: (webhook) => writeAnswerTo(Object.assign(webhook, {message: {text: webhook.callback_query.data, from: webhook.callback_query.from}}), "SUDIM_NESUDIM")  },
+    { callFunc: (webhook) => writeAnswerTo(({...webhook, ...{message: {text: webhook.callback_query.data, from: webhook.callback_query.from}}}), "SUDIM_NESUDIM")  },
     { callFunc: webhook => changeStateTo("VODITEL_20", ["SUDIM_NESUDIM"], webhook.callback_query.message.chat.id, true, webhook, "sudim" )},
     { callFunc: webhook => changeStateTo("VODITEL_1", ["SUDIM_NESUDIM"], webhook.callback_query.message.chat.id, true, webhook, "nesudim" )},
   ],
@@ -262,7 +262,7 @@ const UserStates = Object.freeze({
     { callFunc: webhook => changeStateTo("NEPOGASHENY", ["VODITEL_20"], webhook.callback_query.message.chat.id, false, webhook, undefined )},
   ],
   "NEPOGASHENY": [
-    { callFunc: (webhook) => writeAnswerTo(Object.assign(webhook, {message: {text: webhook.callback_query.data, from: webhook.callback_query.from}}), "NEPOGASHENY")  },
+    { callFunc: (webhook) => writeAnswerTo(({...webhook, ...{message: {text: webhook.callback_query.data, from: webhook.callback_query.from}}}), "NEPOGASHENY")  },
     { callFunc: webhook => changeStateTo("VODITEL_1", ["NEPOGASHENY"], webhook.callback_query.message.chat.id, true, webhook, "pogasheny" )},
     { callFunc: webhook => changeStateTo("VODITEL_21", ["NEPOGASHENY"], webhook.callback_query.message.chat.id, true, webhook, "nepogasheny" )},
   ],
@@ -273,9 +273,10 @@ const UserStates = Object.freeze({
         "parse_mode": 'HTML'
       }
     },
-    { callFunc: webhook => changeStateTo("VODITEL_22", ["VODITEL_21"], webhook.callback_data.message.chat.id, false, webhook, undefined )},
+    { callFunc: webhook => changeStateTo("VODITEL_22", ["VODITEL_21"], webhook.callback_query.message.chat.id, false, webhook, undefined )},
   ],
     "VODITEL_22": [
+    { callFunc: (webhook) => writeAnswerTo(webhook, "dateStartWork")  },
     { tgMethod: "/sendMessage", 
       payload: {
         text: "22.	Запишите видеовизитку с ответами на следующие вопросы: Почему мы должны взять на работу именно Вас в нашу компанию?",
@@ -299,9 +300,9 @@ const UserStates = Object.freeze({
     { callFunc: webhook => changeStateTo("BELAYA_SERAYA", ["VODITEL_23"], webhook.message.chat.id, false, webhook, undefined )},
   ],
   "BELAYA_SERAYA": [
-    { callFunc: (webhook) => writeAnswerTo({...{message: {text: webhook.callback_query.data}}, ...webhook}, "BELAYA_SERAYA")  },
-    { callFunc: webhook => changeStateTo("VODITEL_1", ["SUDIM_NESUDIM"], webhook.callback_query.message.chat.id, true, webhook, "belaya" )},
-    { callFunc: webhook => changeStateTo("VODITEL_21", ["SUDIM_NESUDIM"], webhook.callback_query.message.chat.id, true, webhook, "seraya" )},
+    { callFunc: (webhook) => writeAnswerTo(({...webhook, ...{message: {text: webhook.callback_query.data, from: webhook.callback_query.from}}}), "BELAYA_SERAYA")  },
+    { callFunc: webhook => changeStateTo("VODITEL_21", ["BELAYA_SERAYA"], webhook.callback_query.message.chat.id, true, webhook, "belaya" )},
+    { callFunc: webhook => changeStateTo("VODITEL_21", ["BELAYA_SERAYA"], webhook.callback_query.message.chat.id, true, webhook, "seraya" )},
   ],
   "OJIDAITE": [
     { tgMethod: "/sendMessage", 

@@ -15,15 +15,21 @@
 // clasp create-deployment -i "AKfycbz2rPEcu6yLwQrV5k6A90nzip_2oeEelqenikS-2VDfmIya7kO1P5Q2Fk9Bu70mDJqh6A"
 
 
+Logger = useSpreadsheet('1PnoU5BZgcwN4zF7ixdMHcneOfL8dWUUHtCvOGRbbDXA'); 
+const TOKEN = PropertiesService.getScriptProperties().getProperties().tgToken
+
 function setWebhook() {
+  const TOKEN = "";
+  PropertiesService.getScriptProperties().setProperty("tgToken", TOKEN)
+
   var scriptUrl = ScriptApp.getService().getUrl();
-  var response = UrlFetchApp.fetch("https://api.telegram.org/bot" + TOKEN  + "/setWebhook?url=" + encodeURIComponent("https://script.google.com/macros/s/AKfycbz2rPEcu6yLwQrV5k6A90nzip_2oeEelqenikS-2VDfmIya7kO1P5Q2Fk9Bu70mDJqh6A/exec"));
+  var response = UrlFetchApp.fetch("https://api.telegram.org/bot" + TOKEN  + "/setWebhook?url=" + encodeURIComponent("https://script.google.com/macros/s/AKfycbw0QDGffZfQRZWa5hUee9NFAMtDtUKo6uh3Ary192V92jtkJo0mvQ0Uq1kPm8uYdkQ/exec"));
   Logger.log(response.getContentText());
 
-  // ScriptApp.newTrigger("triggerEveryHours1")
-  // .timeBased()
-  // .everyHours(1)
-  // .create();
+  ScriptApp.newTrigger("triggerEveryHours1")
+  .timeBased()
+  .everyHours(1)
+  .create();
 }
 
 // function doTimeout1(row, timeout) {
@@ -85,7 +91,8 @@ function createNewClient(webhook) {
       row = getRowByUserId(webhook.message.from["id"])
       s.getRange(row,column).setValue("START_0")
     }
-    getCellByUserId(webhook.message.from["id"], "stateFSM")
+
+    // getCellByUserId(webhook.message.from["id"], "stateFSM")
   }
 }
 
@@ -161,7 +168,7 @@ function changeStateToWAIT_TIMEOUT1_7(webhook) {
   // if (webhook.callback_query && webhook.callback_query.data === "claim") {
     // let s = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Clients");
     getCellByUserId(webhook.callback_query.message.chat.id, "timeout").setValue(new Date().getTime() + (60 * 60 * 0.25))  // 60 секунд * 60 минут * 24 часа
-    getCellByUserId(webhook.callback_query.message.chat.id, "stateFSM").setValue("WAIT_TIMEOUT1_7")
+    // getCellByUserId(webhook.callback_query.message.chat.id, "stateFSM").setValue("WAIT_TIMEOUT1_7")
 
     // let actions = UserStates[getCellByUserId(webhook.callback_query.message.chat.id, "stateFSM").getValue()];
     // doActions(webhook, actions);
@@ -204,73 +211,38 @@ function doActions(webhook, actions) {
     }
   }
 }
-function myFunction() {
-  try {
-    // Add one line to use BetterLog and log to a spreadsheet
-    Logger = BetterLog.useSpreadsheet('1GxF_Jw2UqF4iHNR46vgVogWLmQhPfrUlDzRyGvdt3WI', "Log"); 
-    
-    //Now you can log and it will also log to the spreadsheet
-    Logger.log("That's all you need to do");  
-    
-    //Do more logging
-    for (var i = 0; i < 5; i++) {
-      var processingMessage = 'Processing ' + i;
-      Logger.finest('This is inside my loop. i is %s', i );
-    }
-    //We're done
-    Logger.log('The loop is done and i is now %s', i );
-    
-  } catch (e) { //with stack tracing if your exceptions bubble up to here
-    e = (typeof e === 'string') ? new Error(e) : e;
-    Logger.severe('%s: %s (line %s, file "%s"). Stack: "%s" . While processing %s.',e.name||'', 
-               e.message||'', e.lineNumber||'', e.fileName||'', e.stack||'', processingMessage||'');
-    throw e;
-  }
-}
 
 function doPost(e) {
-
   // Logger = useSpreadsheet('1GxF_Jw2UqF4iHNR46vgVogWLmQhPfrUlDzRyGvdt3WI'); 
   try {
-    
-    Logger = BetterLog.useSpreadsheet('1GxF_Jw2UqF4iHNR46vgVogWLmQhPfrUlDzRyGvdt3WI'); 
-    // Add one line to use BetterLog and log to a spreadsheet
-    // Logger = BetterLog.useSpreadsheet('your-spreadsheet-key-goes-here'); 
-    
-  //   //Now you can log and it will also log to the spreadsheet
-    Logger.log("That's all you need to do");  
-    
-    //Do more logging
-    for (var i = 0; i < 5; i++) {
-      var processingMessage = 'Processing ' + i;
-      Logger.finest('This is inside my loop. i is %s', i );
-    }
-    //We're done
-    Logger.log('The loop is done and i is now %s', i );
-    
+  doPost2(e);
   } catch (e) { //with stack tracing if your exceptions bubble up to here
     e = (typeof e === 'string') ? new Error(e) : e;
     Logger.severe('%s: %s (line %s, file "%s"). Stack: "%s" . While processing %s.',e.name||'', 
-               e.message||'', e.lineNumber||'', e.fileName||'', e.stack||'', processingMessage||'');
+               e.message||'', e.lineNumber||'', e.fileName||'', e.stack||'', e.processingMessage||'');
     throw e;
   }
 }
 
 function doPost2(e) {
+  // let webhook = {"update_id":62039330,"message":{"message_id":26,"from":{"id":275665295,"is_bot":false,"first_name":"Вася Который","last_name":"Батуми 🇬🇪","username":"liliammo","language_code":"ru"},"chat":{"id":275665295,"first_name":"Вася Который","last_name":"Батуми 🇬🇪","username":"liliammo","type":"private"},"date":1743579077,"text":"/start"}}
+
   var webhook = JSON.parse(e.postData.contents);
   let chat_id = '0';
   if (webhook.callback_query) {
     chat_id = webhook.callback_query.message.chat.id.toString()
   } else if (webhook.message) {
     chat_id = webhook.message.chat.id.toString()
-    if (webhook.message.text === "/start") {
-      getCellByUserId(chat_id, "stateFSM").setValue("START_0")
+    try {
+
+      if (webhook.message.text === "/start") {
+        getCellByUserId(chat_id, "stateFSM").setValue("START_0")
+      }
+    } catch {
+      createNewClient(webhook)
     }
   }
 
-  if (getRowByUserId(chat_id) === -1) {
-    createNewClient(webhook)
-  }
 
   let actions = UserStates[getCellByUserId(chat_id, "stateFSM").getValue()];
   doActions(webhook, actions);
