@@ -1,0 +1,17 @@
+{
+  "scriptId": "1d_DSXmctJLbzO9F4lUVekNKxqXSh3E0iQ-c1OnprohyT-uJpovYFI5kL",
+  "rootDir": "tgbot_gapps",
+  "parentId": "1xNbqY2rxb55TbSg02b4k3EclhvcFhlG03rSHEG2wglI",
+  "scriptExtensions": [
+    ".js",
+    ".gs"
+  ],
+  "htmlExtensions": [
+    ".html"
+  ],
+  "jsonExtensions": [
+    ".json"
+  ],
+  "filePushOrder": [],
+  "skipSubdirectories": false
+}
